@@ -105,7 +105,7 @@ public class RestClient extends JavascriptClass
 			.addParameter(new JavascriptParameter(JavascriptBasicType.ANY, "resultObject"))
 			.addBody("path = replacePathParamsInPath(path, pathParams);")
 			.addBody("if (queryParams != null) { ")
-				.addBody("path = replaceQueryParamsInPath(path, queryParams);", 1)
+				.addBodyWithIndent("path = replaceQueryParamsInPath(path, queryParams);", 1)
 			.addBody("}")
 			.addLine()
 			.addBody("var headers = {")
