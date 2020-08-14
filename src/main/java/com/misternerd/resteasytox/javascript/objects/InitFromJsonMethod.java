@@ -36,7 +36,7 @@ public class InitFromJsonMethod extends JavascriptPublicMethod
 
 			boolean bodyComplete = false;
 
-			if (!bodyComplete && layout.getDtoClasses().contains(cls))
+			if (layout.getDtoClasses().contains(cls))
 			{
 				bodyComplete = createDtoAssignment(jsClass.namespace, member, memberName);
 			}
