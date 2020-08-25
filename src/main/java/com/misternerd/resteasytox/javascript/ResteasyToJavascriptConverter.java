@@ -375,18 +375,18 @@ public class ResteasyToJavascriptConverter extends AbstractResteasyConverter
 	}
 
 	private String buildUrlParamsFromSet(Set<MethodParameter> parameterSet) {
-		StringBuffer resultBuffer = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for(MethodParameter param : parameterSet) {
-			if(resultBuffer.length() != 0) {
-				resultBuffer.append('&');
+			if(sb.length() != 0) {
+				sb.append('&');
 			}
-			resultBuffer.append(param.name);
-			resultBuffer.append('=');
-			resultBuffer.append('{');
-			resultBuffer.append(param.name);
-			resultBuffer.append('}');
+			sb.append(param.name);
+			sb.append('=');
+			sb.append('{');
+			sb.append(param.name);
+			sb.append('}');
 		}
-		return resultBuffer.toString();
+		return sb.toString();
 	}
 
 

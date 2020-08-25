@@ -4,9 +4,9 @@ import com.misternerd.resteasytox.Metadata;
 import org.apache.commons.io.IOUtils;
 import org.apache.maven.project.MavenProject;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -36,16 +36,33 @@ public class MetaDataGenerator
 
 	private void createNpmPackageFile() throws IOException
 	{
+		String content = loadNpmPackageFileTemplate();
+		content = replacePlaceholders(content);
+		persistNpmPackageFile(content);
+	}
+
+
+	private String loadNpmPackageFileTemplate() throws IOException
+	{
 		InputStream stream = getClass().getClassLoader().getResourceAsStream("js_package_template.json");
-		String content = IOUtils.toString(stream);
-		content = content.replace("##NAME##", metadata.getName());
-		content = content.replace("##VERSION##", project.getVersion());
-		content = content.replace("##DESCRIPTION##", metadata.getDescription());
-		content = content.replace("##AUTHOR##", metadata.getAuthor());
-		content = content.replace("##HOMEPAGE##", metadata.getHomepage());
-		content = content.replace("##SCMURL##", metadata.getScmUrl());
-		content = content.replace("##EMAIL##", metadata.getEmail());
-		Files.write(new File(outputPath.toFile(), "package.json").toPath(), content.getBytes("UTF-8"));
+		return IOUtils.toString(stream);
+	}
+
+	private String replacePlaceholders(String content) {
+		return content
+			.replace("##NAME##", metadata.getName())
+			.replace("##VERSION##", project.getVersion())
+			.replace("##DESCRIPTION##", metadata.getDescription())
+			.replace("##AUTHOR##", metadata.getAuthor())
+			.replace("##HOMEPAGE##", metadata.getHomepage())
+			.replace("##SCMURL##", metadata.getScmUrl())
+			.replace("##EMAIL##", metadata.getEmail());
+	}
+
+	private void persistNpmPackageFile(String content) throws IOException
+	{
+		Path target = outputPath.resolve("package.json");
+		Files.write(target, content.getBytes(StandardCharsets.UTF_8));
 	}
 
 }
