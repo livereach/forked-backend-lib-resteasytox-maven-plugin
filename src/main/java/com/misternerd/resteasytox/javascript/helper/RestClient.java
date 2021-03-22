@@ -38,6 +38,7 @@ public class RestClient extends JavascriptClass
 		addReplaceQueryParamsMethod();
 		addDecodeDataToObjectMethod();
 		addDefaultRequestMethod();
+		addFieldAndMethodForSettingCustomHeaders();
 		addGettersForServiceClasses(layout);
 		addGetRequestMethod();
 		addPostRequestMethod();
@@ -108,11 +109,20 @@ public class RestClient extends JavascriptClass
 				.addBodyWithIndent("path = replaceQueryParamsInPath(path, queryParams);", 1)
 			.addBody("}")
 			.addLine()
+			// first, write the default headers
 			.addBody("var headers = {")
 				.addBodyWithIndent("'Content-Type': contentType,", 1)
 				.addBodyWithIndent("'Accept': resultType", 1)
 			.addBody("}")
 			.addLine()
+			// global headers can override default headers
+			.addBody("if(Object.keys(globalHeaders).length > 0) {")
+				.addBodyWithIndent("for(var headerName in globalHeaders) {", 1)
+					.addBodyWithIndent("headers[headerName] = globalHeaders[headerName];", 2)
+				.addBodyWithIndent("}",1)
+			.addBody("}")
+			.addLine()
+			// function headers can override both global and default headers
 			.addBody("if(headerParams != null) {")
 				.addBodyWithIndent("for(var headerName in headerParams) {", 1)
 					.addBodyWithIndent("headers[headerName] = headerParams[headerName];", 2)
@@ -178,6 +188,17 @@ public class RestClient extends JavascriptClass
 					.addBodyWithIndent("}", 2)
 				.addBodyWithIndent("});", 1)
 			.addBody("});");
+	}
+
+
+	private void addFieldAndMethodForSettingCustomHeaders()
+	{
+		addPrivateMember(JavascriptBasicType.OBJECT, "globalHeaders", "{}", false);
+
+		addPublicMethod("addGlobalHeader", JavascriptBasicType.VOID)
+			.addParameter(new JavascriptParameter(JavascriptBasicType.STRING, "headerName"))
+			.addParameter(new JavascriptParameter(JavascriptBasicType.STRING, "value"))
+			.addBody("globalHeaders[headerName] = value;");
 	}
 
 
